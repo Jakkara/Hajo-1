@@ -1,3 +1,5 @@
 public class UDPClient {
-  juu moi
+    public static void main(String[] args) {
+        System.out.print("juu moi");
+    }
 }
