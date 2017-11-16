@@ -1,4 +1,3 @@
-import javax.swing.*;
 import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,15 +8,20 @@ import java.net.*;
 public class UDPClient {
     private InetAddress activeIPAddress;
     private int activePortNumber = 3126;
-    private DatagramSocket socket;
+    private DatagramSocket socketUDP;
+    //TCP
+    private ServerSocket serverSocket;
+    private Socket connectionTCP;
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
 
 
     public UDPClient() {
     }
 
-    public void createSocket() {
+    public void createUDPSocket() {
         try {
-            socket = new DatagramSocket();
+            socketUDP = new DatagramSocket();
             activeIPAddress = InetAddress.getByName("localhost");
         } catch (SocketException sE) {
             sE.printStackTrace();
@@ -26,14 +30,28 @@ public class UDPClient {
         }
     }
 
-    public void sendPacket(String message) {
+    public void sendUdpPacket(String message) {
         try {
             byte[] dataArrayToSend = message.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(dataArrayToSend, dataArrayToSend.length, activeIPAddress, activePortNumber);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+    }
+    public void createTcpSocket(){ //luo socketit TCP-keskustelua varten
+        try{
+            serverSocket = new ServerSocket(activePortNumber);
+            while (true){
+                connectionTCP = serverSocket.accept();
+                System.out.println("Forming connection with server.");
+                output = new ObjectOutputStream(connectionTCP.getOutputStream());
+                output.flush();
+                input = new ObjectInputStream(connectionTCP.getInputStream());
+                System.out.println("Stream setup complete.");
+            }
+        }catch (IOException ioE) {
+            ioE.printStackTrace();
+        }
     }
 }
 
