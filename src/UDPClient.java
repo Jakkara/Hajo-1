@@ -14,7 +14,7 @@ public class UDPClient {
     private Socket connectionTCP;
     private ObjectOutputStream output;
     private ObjectInputStream input;
-
+    private boolean portsAreSetup = false;
 
     public UDPClient() {
     }
@@ -41,6 +41,7 @@ public class UDPClient {
     public void createTcpSocket(){ //luo socketit TCP-keskustelua varten
         try{
             serverSocket = new ServerSocket(activePortNumber);
+            serverSocket.setSoTimeout(5000);
             while (true){
                 connectionTCP = serverSocket.accept();
                 System.out.println("Forming connection with server.");
@@ -48,10 +49,26 @@ public class UDPClient {
                 output.flush();
                 input = new ObjectInputStream(connectionTCP.getInputStream());
                 System.out.println("Stream setup complete.");
+                communicationPhase();
             }
         }catch (IOException ioE) {
             ioE.printStackTrace();
         }
+    }
+    public void communicationPhase(){
+        System.out.println("Client listening for input.");
+        String message = "";
+        try{
+            message = (String) input.readObject();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (portsAreSetup == false){
+            int portsAmount = Integer.parseInt(message);
+            runSummingThreads(portsAmount);
+            portsAreSetup = true;
+        }
+
     }
 }
 
