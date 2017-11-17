@@ -68,7 +68,6 @@ public class UDPClient {
             runSummingThreads(portsAmount);
             portsAreSetup = true;
         }
-
     }
 }
 
