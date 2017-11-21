@@ -4,8 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
-public class UDPClient {
+public class Client {
     private InetAddress activeIPAddress;
     private int activePortNumber = 3126;
     private DatagramSocket socketUDP;
@@ -16,7 +17,7 @@ public class UDPClient {
     private ObjectInputStream input;
     private boolean portsAreSetup = false;
 
-    public UDPClient() {
+    public Client() {
     }
 
     public void createUDPSocket() {
@@ -55,7 +56,7 @@ public class UDPClient {
             ioE.printStackTrace();
         }
     }
-    public void communicationPhase(){
+    private void communicationPhase(){ //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client listening for input.");
         String message = "";
         try{
@@ -63,10 +64,17 @@ public class UDPClient {
         }catch (Exception e){
             e.printStackTrace();
         }
-        if (portsAreSetup == false){
+        if (!portsAreSetup){ //jos portteja ei vielä avattu, käynnistä
             int portsAmount = Integer.parseInt(message);
             runSummingThreads(portsAmount);
             portsAreSetup = true;
+            System.out.println("Portit auki");
+        }else {//TODO ota vastaan kyselyt palvelimelta
+        }
+    }
+    private void runSummingThreads(int n){
+        for (int i = 0; i < n; i++){
+
         }
     }
 }
