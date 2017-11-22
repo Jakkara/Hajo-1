@@ -65,10 +65,12 @@ public class Client implements Serializable{
         do{
             try{
                 message = (String) input.readObject();
+                inputInterpreter(message);
+
             }catch (Exception e){
                 e.printStackTrace();
             }
-        }while(message.equals(""));
+        }while(!message.equals(""));
         if (!portsAreSetup ){ //jos portteja ei vielä avattu, käynnistä
             int portsAmount = Integer.parseInt(message);
             runSummingThreads(portsAmount);
@@ -82,6 +84,9 @@ public class Client implements Serializable{
             activeCalculators.add(new Calculator(i));
             System.out.println("Summing threads alive.");
         }
+    }
+    private void inputInterpreter(String message){
+        //TODO viestin käsittely
     }
 }
 
