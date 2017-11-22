@@ -70,23 +70,21 @@ public class Client implements Serializable{
             }catch (Exception e){
                 e.printStackTrace();
             }
-        }while(!message.equals(""));
-        if (!portsAreSetup ){ //jos portteja ei vielä avattu, käynnistä
-            int portsAmount = Integer.parseInt(message);
-            runSummingThreads(portsAmount);
-            portsAreSetup = true;
-            System.out.println("Portit auki");
-        }else {//TODO ota vastaan kyselyt palvelimelta
-        }
-    }
+        }while (!message.equals(""))
     private void runSummingThreads(int n){
         for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
             activeCalculators.add(new Calculator(i));
             System.out.println("Summing threads alive.");
         }
     }
-    private void inputInterpreter(String message){
+    private void inputInterpreter(String message) {
         //TODO viestin käsittely
+        if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
+            int portsAmount = Integer.parseInt(message);
+            runSummingThreads(portsAmount);
+            portsAreSetup = true;
+            System.out.println("Portit auki");
+        }
     }
 }
 
