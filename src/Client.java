@@ -16,9 +16,9 @@ public class Client {
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean portsAreSetup = false;
+    private ArrayList<Calculator> activeCalculators;
 
-    public Client() {
-    }
+    public Client() {}
 
     public void createUDPSocket() {
         try {
@@ -64,7 +64,7 @@ public class Client {
         }catch (Exception e){
             e.printStackTrace();
         }
-        if (!portsAreSetup){ //jos portteja ei vielä avattu, käynnistä
+        if (!portsAreSetup ){ //jos portteja ei vielä avattu, käynnistä
             int portsAmount = Integer.parseInt(message);
             runSummingThreads(portsAmount);
             portsAreSetup = true;
@@ -73,8 +73,8 @@ public class Client {
         }
     }
     private void runSummingThreads(int n){
-        for (int i = 0; i < n; i++){
-
+        for (int i = 3127; i <= 3127 + n; i++){ //luodaan portteja lähtien 3127
+            activeCalculators.add(new Calculator(i));
         }
     }
 }
