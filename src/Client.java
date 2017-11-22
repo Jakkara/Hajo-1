@@ -6,7 +6,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-public class Client {
+public class Client implements Serializable{
     private InetAddress activeIPAddress;
     private int activePortNumber = 3126;
     private DatagramSocket socketUDP;
@@ -16,7 +16,7 @@ public class Client {
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean portsAreSetup = false;
-    private ArrayList<Calculator> activeCalculators;
+    private ArrayList<Calculator> activeCalculators = new ArrayList<>();
 
     public Client() {}
 
@@ -24,6 +24,7 @@ public class Client {
         try {
             socketUDP = new DatagramSocket();
             activeIPAddress = InetAddress.getByName("localhost");
+            System.out.println("Client UDP socket created.");
         } catch (SocketException sE) {
             sE.printStackTrace();
         } catch (UnknownHostException uhE) {
@@ -35,13 +36,15 @@ public class Client {
         try {
             byte[] dataArrayToSend = message.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(dataArrayToSend, dataArrayToSend.length, activeIPAddress, activePortNumber);
+            socketUDP.send(packetToSend);
+            System.out.println("UDP packet sent.");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void createTcpSocket(){ //luo socketit TCP-keskustelua varten
+    public void createTcpSocket(){ //luo socketin TCP-keskustelua varten
         try{
-            serverSocket = new ServerSocket(activePortNumber);
+            serverSocket = new ServerSocket(3200);
             serverSocket.setSoTimeout(5000);
             while (true){
                 connectionTCP = serverSocket.accept();
@@ -59,11 +62,13 @@ public class Client {
     private void communicationPhase(){ //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client listening for input.");
         String message = "";
-        try{
-            message = (String) input.readObject();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        do{
+            try{
+                message = (String) input.readObject();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }while(message.equals(""));
         if (!portsAreSetup ){ //jos portteja ei vielä avattu, käynnistä
             int portsAmount = Integer.parseInt(message);
             runSummingThreads(portsAmount);
@@ -73,8 +78,9 @@ public class Client {
         }
     }
     private void runSummingThreads(int n){
-        for (int i = 3127; i <= 3127 + n; i++){ //luodaan portteja lähtien 3127
+        for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
             activeCalculators.add(new Calculator(i));
+            System.out.println("Summing threads alive.");
         }
     }
 }
