@@ -77,6 +77,7 @@ public class Client implements Serializable{
     private void runSummingThreads(int n){
     for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
         activeCalculators.add(new Calculator(i));
+        activeCalculators.get(i).run();
         System.out.println("Summing thread " + i +  " alive.");
     }
     }

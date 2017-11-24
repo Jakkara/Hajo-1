@@ -10,6 +10,8 @@ public class Calculator extends Thread {
     private ObjectInputStream input;
     private int amountOfReceivedInputs;
     private int sum;
+    private volatile boolean stop = false;
+
     Calculator(int port){
         portNumber = port;
     }
@@ -18,7 +20,7 @@ public class Calculator extends Thread {
     public void run() {
         try {
             serverSocket = new ServerSocket(portNumber);
-            while (true) {
+            while (!stop) {
                 connectionTCP = serverSocket.accept();
                 System.out.println(portNumber + "is active.");
                 input = new ObjectInputStream(connectionTCP.getInputStream());
@@ -43,6 +45,10 @@ public class Calculator extends Thread {
     }
     public int getNumbersReceivedAmount(){
         return amountOfReceivedInputs;
+    }
+    public void kill(){
+        stop = true;
+
     }
 
 }
