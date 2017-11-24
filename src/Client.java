@@ -79,7 +79,7 @@ public class Client implements Serializable{
         System.out.println("Summing threads alive.");
     }
     }
-    private void inputInterpreter(int message) {     //k‰sittele saatu luku
+    private void inputInterpreter(int receivedInt) {     //k‰sittele saatu luku
         //TODO viestin k‰sittely
         if (!portsAreSetup) { //jos portteja ei viel‰ avattu, k‰ynnist‰
             runSummingThreads(receivedInt);
@@ -118,7 +118,7 @@ public class Client implements Serializable{
 			break;
 		
 		case 3:					//kaikille palvelimille v‰litettyjen lukujen kokonaism‰‰r‰
-            
+
 			break;
 			default:
 
