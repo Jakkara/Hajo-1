@@ -80,9 +80,9 @@ public class Client implements Serializable{
     }
     private void inputInterpreter(String message) {
         //TODO viestin käsittely
-        int portsAmount = Integer.parseInt(message);
+        int receivedInt = Integer.parseInt(message);
         if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
-            runSummingThreads(portsAmount);
+            runSummingThreads(receivedInt);
             portsAreSetup = true;
             System.out.println("Portit auki");
         }
