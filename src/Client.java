@@ -20,7 +20,7 @@ public class Client implements Serializable{
 
     public Client() {}
 
-    public void createUDPSocket() {//luo l‰hett‰mist‰ varten UDP-soketti
+    public void createUDPSocket() {
         try {
             socketUDP = new DatagramSocket();
             activeIPAddress = InetAddress.getByName("localhost");
@@ -32,7 +32,7 @@ public class Client implements Serializable{
         }
     }
 
-    public void sendUdpPacket(String message) { //l‰het‰ porttiosoitteen sis‰lt‰v‰ paketti
+    public void sendUdpPacket(String message) {
         try {
             byte[] dataArrayToSend = message.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(dataArrayToSend, dataArrayToSend.length, activeIPAddress, activePortNumber);
@@ -42,7 +42,7 @@ public class Client implements Serializable{
             e.printStackTrace();
         }
     }
-    public void createTcpSocket(){ //luo socket TCP-keskustelua varten
+    public void createTcpSocket(){ //luo socketin TCP-keskustelua varten
         try{
             serverSocket = new ServerSocket(3200);
             serverSocket.setSoTimeout(5000);
@@ -59,13 +59,13 @@ public class Client implements Serializable{
             ioE.printStackTrace();
         }
     }
-    private void communicationPhase() { //kun ollaan valmiita kuuntelemaan k‰skyj‰
+    private void communicationPhase() { //kun ollaan valmiita kuuntelemaan k√§skyj√§
         System.out.println("Client listening for input.");
-        int message;
+        String message = "";
         do {
             try {
-                message = input.readInt();
-                inputInterpreter(message);      //k‰sittelee viestin
+                message = (String) input.readObject();
+                inputInterpreter(message);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -73,15 +73,15 @@ public class Client implements Serializable{
         } while (true);
     }
     private void runSummingThreads(int n){
-    for (int i = 3127; i <= 3127 + n; i++){         //luodaan portit 3127:(3127+n)
-        activeCalculators.add(new Calculator(i));   //luodaan ja...
-        activeCalculators.get(i).run();             //...k‰ynnistet‰‰n oliot
+    for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
+        activeCalculators.add(new Calculator(i));
         System.out.println("Summing threads alive.");
     }
     }
-    private void inputInterpreter(int message) {     //k‰sittele saatu luku
-        //TODO viestin k‰sittely
-        if (!portsAreSetup) { //jos portteja ei viel‰ avattu, k‰ynnist‰
+    private void inputInterpreter(String message) {
+        //TODO viestin k√§sittely
+        int receivedInt = Integer.parseInt(message);
+        if (!portsAreSetup) { //jos portteja ei viel√§ avattu, k√§ynnist√§
             runSummingThreads(receivedInt);
             portsAreSetup = true;
             System.out.println("Portit auki");
@@ -98,7 +98,7 @@ public class Client implements Serializable{
 			close();
 			break;
 			
-		case 1:					//t?h?n menness? v?litettyjen lukujen summa
+		case 1:					//t‰h‰n menness‰ v‰litettyjen lukujen summa
 			int calcTotalValue = 0;
 			for (int i=0; i<activeCalculators.size(); i++) {
 				calcTotalValue += activeCalculators.get(i).getSum();
@@ -107,12 +107,12 @@ public class Client implements Serializable{
 			return calcTotalValue;	
 			break;
 		
-		case 2:					//mille palvelijalle v?litetty summa suurin
+		case 2:					//mille palvelijalle v‰litetty summa suurin
 			
 
 			break;
 		
-		case 3:					//kaikille palvelimille v?litettyjen lukujen kokonaism??r?
+		case 3:					//kaikille palvelimille v‰litettyjen lukujen kokonaism‰‰r‰
 
 
 			break;
@@ -121,12 +121,6 @@ public class Client implements Serializable{
 			
 		}
 
-    }private void answerRequest(int n){ //v‰lit‰ viesti takaisin palvelimelle
-        try{
-            output.writeInt(n);
-            output.flush();
-        }catch (IOException ioE){ioE.printStackTrace();
-        }
     }
 }
 
