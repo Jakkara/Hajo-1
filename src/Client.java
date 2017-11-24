@@ -59,19 +59,20 @@ public class Client implements Serializable{
             ioE.printStackTrace();
         }
     }
-    private void communicationPhase(){ //kun ollaan valmiita kuuntelemaan käskyjä
+    private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client listening for input.");
         String message = "";
-        do{
-            try{
+        do {
+            try {
                 message = (String) input.readObject();
                 inputInterpreter(message);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }while (!message.equals(""))
-    private void runSummingThreads(int n){
+        } while (!message.equals(""));
+    }
+        private void runSummingThreads(int n){
         for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
             activeCalculators.add(new Calculator(i));
             System.out.println("Summing threads alive.");
