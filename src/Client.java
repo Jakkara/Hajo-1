@@ -53,7 +53,7 @@ public class Client implements Serializable{
                 System.out.println("Forming connection with server.");
                 output = new ObjectOutputStream(outputStr);
                 output.flush();
-                input = new ObjectInputStream(input);
+                input = new ObjectInputStream(inputStr);
                 System.out.println("Stream setup complete.");
                 communicationPhase();
             }
@@ -77,7 +77,7 @@ public class Client implements Serializable{
     private void runSummingThreads(int n){
     for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
         activeCalculators.add(new Calculator(i));
-        System.out.println("Summing threads alive.");
+        System.out.println("Summing thread " + i +  " alive.");
     }
     }
     private void inputInterpreter(int receivedInt) {
