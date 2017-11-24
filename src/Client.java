@@ -48,10 +48,12 @@ public class Client implements Serializable{
             serverSocket.setSoTimeout(5000);
             while (true){
                 connectionTCP = serverSocket.accept();
+                InputStream inputStr = connectionTCP.getInputStream();
+                OutputStream outputStr = connectionTCP.getOutputStream();
                 System.out.println("Forming connection with server.");
-                output = new ObjectOutputStream(connectionTCP.getOutputStream());
+                output = new ObjectOutputStream(outputStr);
                 output.flush();
-                input = new ObjectInputStream(connectionTCP.getInputStream());
+                input = new ObjectInputStream(input);
                 System.out.println("Stream setup complete.");
                 communicationPhase();
             }
@@ -61,10 +63,10 @@ public class Client implements Serializable{
     }
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client listening for input.");
-        String message = "";
+        int message;
         do {
             try {
-                message = (String) input.readObject();
+                message = input.readInt();
                 inputInterpreter(message);
 
             } catch (Exception e) {
@@ -78,9 +80,8 @@ public class Client implements Serializable{
         System.out.println("Summing threads alive.");
     }
     }
-    private void inputInterpreter(String message) {
+    private void inputInterpreter(int receivedInt) {
         //TODO viestin käsittely
-        int receivedInt = Integer.parseInt(message);
         if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
             runSummingThreads(receivedInt);
             portsAreSetup = true;

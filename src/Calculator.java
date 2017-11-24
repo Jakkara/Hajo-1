@@ -8,7 +8,8 @@ public class Calculator extends Thread {
     private Socket connectionTCP;
     private ServerSocket serverSocket;
     private ObjectInputStream input;
-
+    private int amountOfReceivedInputs;
+    private int sum;
     Calculator(int port){
         portNumber = port;
     }
@@ -29,6 +30,19 @@ public class Calculator extends Thread {
     }
     private void summingPhase(){
         //TODO : laske saadut luvut
+        int receivedInt = 0;
+        try{
+            receivedInt = input.readInt();
+            sum += receivedInt;
+            amountOfReceivedInputs += 1;
+        }catch (IOException ioE){ioE.printStackTrace();
+        }
+    }
+    public int getSum(){
+        return sum;
+    }
+    public int getNumbersReceivedAmount(){
+        return amountOfReceivedInputs;
     }
 
 }
