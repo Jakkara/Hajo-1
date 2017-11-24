@@ -48,12 +48,10 @@ public class Client implements Serializable{
             serverSocket.setSoTimeout(5000);
             while (true){
                 connectionTCP = serverSocket.accept();
-                InputStream inputStr = connectionTCP.getInputStream();
-                OutputStream outputStr = connectionTCP.getOutputStream();
                 System.out.println("Forming connection with server.");
-                output = new ObjectOutputStream(outputStr);
+                output = new ObjectOutputStream(connectionTCP.getOutputStream());
                 output.flush();
-                input = new ObjectInputStream(inputStr);
+                input = new ObjectInputStream(connectionTCP.getInputStream());
                 System.out.println("Stream setup complete.");
                 communicationPhase();
             }
@@ -63,10 +61,10 @@ public class Client implements Serializable{
     }
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan k√§skyj√§
         System.out.println("Client listening for input.");
-        int message;
+        String message = "";
         do {
             try {
-                message = input.readInt();
+                message = (String) input.readObject();
                 inputInterpreter(message);
 
             } catch (Exception e) {
@@ -77,17 +75,52 @@ public class Client implements Serializable{
     private void runSummingThreads(int n){
     for (int i = 3127; i <= 3127 + n; i++){ //luodaan portit 3127:(3127+n)
         activeCalculators.add(new Calculator(i));
-        activeCalculators.get(i).run();
-        System.out.println("Summing thread " + i +  " alive.");
+        System.out.println("Summing threads alive.");
     }
     }
-    private void inputInterpreter(int receivedInt) {
+    private void inputInterpreter(String message) {
         //TODO viestin k√§sittely
+        int receivedInt = Integer.parseInt(message);
         if (!portsAreSetup) { //jos portteja ei viel√§ avattu, k√§ynnist√§
             runSummingThreads(receivedInt);
             portsAreSetup = true;
             System.out.println("Portit auki");
         }
+        switch (receivedInt) {
+		case 0:						//lopettaa summauspalvelijat
+			for (Calculator sum : activeCalculators) {
+				try {
+					sum.kill();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			close();
+			break;
+			
+		case 1:					//t‰h‰n menness‰ v‰litettyjen lukujen summa
+			int calcTotalValue = 0;
+			for (int i=0; i<activeCalculators.size(); i++) {
+				calcTotalValue += activeCalculators.get(i).getSum();
+			}
+			System.out.println("Kokonaissumma on " + sumServersTotalValue);
+			return calcTotalValue;	
+			break;
+		
+		case 2:					//mille palvelijalle v‰litetty summa suurin
+			
+
+			break;
+		
+		case 3:					//kaikille palvelimille v‰litettyjen lukujen kokonaism‰‰r‰
+
+
+			break;
+			default:
+
+			
+		}
+
     }
 }
 
