@@ -108,12 +108,16 @@ public class Client implements Serializable{
 			break;
 		
 		case 2:					//mille palvelijalle välitetty summa suurin
-			
-
+			int greatestCalc = 0;
+			for (int i = 0; i < activeCalculators.size(); i++) {
+				if (greatestCalc < activeCalculators.get(i).getSum())
+					greatestCalc = activeCalculators.get(i).getSum();
+			}
+			System.out.println("Palvelin, jolla suurin summa=" + greatestCalc); 
 			break;
 		
 		case 3:					//kaikille palvelimille välitettyjen lukujen kokonaismäärä
-
+			
 
 			break;
 			default:
