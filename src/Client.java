@@ -65,6 +65,7 @@ public class Client implements Serializable{
         do {
             try {
                 message = input.readInt();
+                System.out.println("Server lähetti luvun : " + message);
                 inputInterpreter(message);      //käsittelee viestin
 
             } catch (Exception e) {
@@ -72,7 +73,7 @@ public class Client implements Serializable{
             }
         } while (true);
     }
-    private void runSummingThreads(int n){
+    private void runSummingThreads(int n){ //TODO *** ArrayList antaa IndexOutOfBoundsia koska se ei sisällä mitään kohdassa 3127 ->
     for (int i = 3127; i <= 3127 + n; i++){         //luodaan portit 3127:(3127+n)
         activeCalculators.add(new Calculator(i));   //luodaan ja...
         activeCalculators.get(i).run();             //...käynnistetään oliot
