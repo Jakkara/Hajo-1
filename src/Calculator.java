@@ -48,7 +48,9 @@ public class Calculator extends Thread {
     }
     public void kill(){
         stop = true;
-
+    }
+    public int getPort() {
+    	return portNumber;
     }
 
 }

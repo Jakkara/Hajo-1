@@ -79,7 +79,7 @@ public class Client implements Serializable{
         System.out.println("Summing threads alive.");
     }
     }
-    private void inputInterpreter(int receivedInt) {     //käsittele saatu luku
+    private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
         //TODO viestin käsittely
         if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
             runSummingThreads(receivedInt);
@@ -87,15 +87,14 @@ public class Client implements Serializable{
             System.out.println("Portit auki");
         }
         switch (receivedInt) {
-		case 0:						//lopettaa summauspalvelijat
-			for (Calculator sum : activeCalculators) {
-				try {
-					sum.kill();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		case 0:						//lopettaa summauspalvelijat ja sulkee yhteydet
+			for (Calculator calc : activeCalculators) {
+					calc.kill(); 
 			}
-			close();
+			output.close();
+			input.close();
+			connectionTCP.close();
+			System.out.println("Palvelijat lopetettu ja yhteydet suljettu.");
 			break;
 			
 		case 1:					//t?h?n menness? v?litettyjen lukujen summa
@@ -103,8 +102,8 @@ public class Client implements Serializable{
 			for (int i=0; i<activeCalculators.size(); i++) {
 				calcTotalValue += activeCalculators.get(i).getSum();
 			}
-			System.out.println("Kokonaissumma on " + sumServersTotalValue);
-			return calcTotalValue;	
+			System.out.println("Kokonaissumma on " + calcTotalValue);
+			answerRequest(calcTotalValue);	
 			break;
 		
 
@@ -112,17 +111,23 @@ public class Client implements Serializable{
 			int greatestCalc = 0;
 			for (int i = 0; i < activeCalculators.size(); i++) {
 				if (greatestCalc < activeCalculators.get(i).getSum())
-					greatestCalc = activeCalculators.get(i).getSum();
+					greatestCalc = activeCalculators.get(i).getPort();
 			}
-			System.out.println("Palvelin, jolla suurin summa=" + greatestCalc); 
+			System.out.println("Palvelin, jolla suurin summa=" + greatestCalc);
+			answerRequest(greatestCalc);
 			break;
 		
 		case 3:					//kaikille palvelimille välitettyjen lukujen kokonaismäärä
-
+			int numbersReceived=0;
+			for(int i=0; i < activeCalculators.size(); i++) {
+				numbersReceived += activeCalculators.get(i).getNumbersReceivedAmount();
+			}
+			System.out.println("Välitettyjen lukujen kokonaismäärä on " + numbersReceived);
+			answerRequest(numbersReceived);
 			break;
-			default:
-
 			
+		default:				//vastaa takaisin luvulla -1, jos ei mikään edellisistä tapauksista
+			answerRequest(-1);
 		}
 
     }private void answerRequest(int n){ //välitä viesti takaisin palvelimelle
@@ -132,6 +137,7 @@ public class Client implements Serializable{
         }catch (IOException ioE){ioE.printStackTrace();
         }
     }
+
 }
 
 
