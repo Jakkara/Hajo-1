@@ -48,6 +48,10 @@ public class Calculator extends Thread {
         return amountOfReceivedInputs;
     }
     public void kill(){
+        try{
+            connectionTCP.close();
+            input.close();
+        }catch (IOException ioE){}
         stop = true;
     }
     public int getPort() {
