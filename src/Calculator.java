@@ -35,6 +35,7 @@ public class Calculator extends Thread {
         int receivedInt = 0;
         try{
             receivedInt = input.readInt();
+            if (receivedInt == 0)kill();
             sum += receivedInt;
             amountOfReceivedInputs += 1;
         }catch (IOException ioE){ioE.printStackTrace();

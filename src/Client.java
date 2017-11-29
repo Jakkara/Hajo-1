@@ -72,12 +72,12 @@ public class Client implements Serializable{
                 inputInterpreter(message);      //käsittelee viestin
 
             } catch (Exception e) {
-                //e.printStackTrace();
+                /*e.printStackTrace();
                 try {
                     answerRequest(-1); //välitä serverille tieto että ei saatu t
                     inputInterpreter(0);        //sulje hallitusti
                 } catch (IOException ioE) {
-                }
+                }*/
             }
         }while (true);
         }
@@ -123,7 +123,7 @@ public class Client implements Serializable{
 			for (int i = 0; i < activeCalculators.size(); i++) {
 				if (greatestCalc < activeCalculators.get(i).getSum()){
 					greatestCalc = activeCalculators.get(i).getSum();
-				    threadIndex = i;}
+				    threadIndex = i + 1;}
 			}
 			System.out.println("Palvelin, jolla suurin summa : " + threadIndex);
 			answerRequest(threadIndex);
@@ -139,7 +139,7 @@ public class Client implements Serializable{
 			break;
 			
 		default:				//vastaa takaisin luvulla -1, jos ei mikään edellisistä tapauksista
-			answerRequest(-1);
+			//answerRequest(-1);
 		}
 
     }private void answerRequest(int n){ //välitä viesti takaisin palvelimelle
