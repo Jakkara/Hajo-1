@@ -10,6 +10,7 @@ public class Client implements Serializable{
     private InetAddress activeIPAddress;
     private int activePortNumber = 3126;
     private DatagramSocket socketUDP;
+    private String offeredPort = "";
     //TCP
     private ServerSocket serverSocket;
     private Socket connectionTCP;
@@ -33,6 +34,7 @@ public class Client implements Serializable{
     }
 
     public void sendUdpPacket(String message) { //lähetä porttiosoitteen sisältävä paketti
+        offeredPort = message;
         try {
             byte[] dataArrayToSend = message.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(dataArrayToSend, dataArrayToSend.length, activeIPAddress, activePortNumber);
@@ -57,6 +59,7 @@ public class Client implements Serializable{
             }
         }catch (IOException ioE) {
             ioE.printStackTrace();
+            sendUdpPacket(offeredPort); //jos timeout, lähetä uudestaan
         }
     }
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
