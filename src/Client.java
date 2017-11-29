@@ -73,16 +73,22 @@ public class Client implements Serializable{
 
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-        } while (true);
+                try{
+                    answerRequest(-1); //välitä serverille tieto että ei saatu t
+                    inputInterpreter(0);        //sulje hallitusti
+                }catch (IOException ioE){}
+                }
+        }while (true);
     }
-    private void runSummingThreads(int n){ //TODO *** ArrayList antaa IndexOutOfBoundsia koska se ei sisällä mitään kohdassa 3127 ->
-    for (int i = 0; i <= n; i++){         //luodaan portit 3127:(3127+n)
-        activeCalculators.add(new Calculator(i + 3127));   //luodaan ja...
-        activeCalculators.get(i).run();             //...käynnistetään oliot
-        answerRequest(activeCalculators.get(i).getPort());
-        System.out.println("Summaussäikeet käynnistetty.");
-    }
+    private void runSummingThreads(int n){
+        System.out.println("Pekka. " + n);
+        for (int i = 0; i <= n; i++){         //luodaan portit 3127:(3127+n)
+            activeCalculators.add(new Calculator(i + 3127));   //luodaan ja...
+            activeCalculators.get(i).run();             //...käynnistetään oliot
+            System.out.println("Pätkä.");
+            answerRequest(activeCalculators.get(i).getPort());
+            System.out.println("Summaussäikeet käynnistetty.");
+        }
     }
     private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
         //TODO viestin käsittely
