@@ -16,7 +16,7 @@ public class Client implements Serializable{
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean portsAreSetup = false;
-    private ArrayList<Calculator> activeCalculators = new ArrayList<>();
+    private ArrayList<Calculator> activeCalculators = new ArrayList<>(3140);
 
     public Client() {}
 
@@ -37,7 +37,7 @@ public class Client implements Serializable{
             byte[] dataArrayToSend = message.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(dataArrayToSend, dataArrayToSend.length, activeIPAddress, activePortNumber);
             socketUDP.send(packetToSend);
-            System.out.println("UDP packet sent.");
+            System.out.println("UDP-paketti lähetetty.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,11 +48,11 @@ public class Client implements Serializable{
             serverSocket.setSoTimeout(5000);
             while (true){
                 connectionTCP = serverSocket.accept();
-                System.out.println("Forming connection with server.");
+                System.out.println("Muodostetaan TCP-yhteys serveriin.");
                 output = new ObjectOutputStream(connectionTCP.getOutputStream());
                 output.flush();
                 input = new ObjectInputStream(connectionTCP.getInputStream());
-                System.out.println("Stream setup complete.");
+                System.out.println("Stream serveriin aktiivinen.");
                 communicationPhase();
             }
         }catch (IOException ioE) {
@@ -60,7 +60,7 @@ public class Client implements Serializable{
         }
     }
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
-        System.out.println("Client listening for input.");
+        System.out.println("Client kuuntelee viestiä.");
         int message;
         do {
             try {
@@ -74,10 +74,11 @@ public class Client implements Serializable{
         } while (true);
     }
     private void runSummingThreads(int n){ //TODO *** ArrayList antaa IndexOutOfBoundsia koska se ei sisällä mitään kohdassa 3127 ->
-    for (int i = 3127; i <= 3127 + n; i++){         //luodaan portit 3127:(3127+n)
-        activeCalculators.add(new Calculator(i));   //luodaan ja...
+    for (int i = 0; i <= n; i++){         //luodaan portit 3127:(3127+n)
+        activeCalculators.add(new Calculator(i + 3127));   //luodaan ja...
         activeCalculators.get(i).run();             //...käynnistetään oliot
-        System.out.println("Summing threads alive.");
+        answerRequest(activeCalculators.get(i).getPort());
+        System.out.println("Summaussäikeet käynnistetty.");
     }
     }
     private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
@@ -138,7 +139,6 @@ public class Client implements Serializable{
         }catch (IOException ioE){ioE.printStackTrace();
         }
     }
-
 }
 
 

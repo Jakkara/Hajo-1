@@ -52,6 +52,5 @@ public class Calculator extends Thread {
     public int getPort() {
     	return portNumber;
     }
-
 }
 

@@ -12,7 +12,7 @@ import java.net.Socket;
 public class WorkDistributor {
 
 	public static final int PORT = 3126;
-	public static boolean verboseMode = false;
+	public static boolean verboseMode = true;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length == 1 && args[0].equals("verbose")) {
