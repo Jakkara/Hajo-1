@@ -22,7 +22,7 @@ public class Calculator extends Thread {
             serverSocket = new ServerSocket(portNumber);
             while (!stop) {
                 connectionTCP = serverSocket.accept();
-                System.out.println(portNumber + "is active.");
+                System.out.println(portNumber + " aktiivinen.");
                 input = new ObjectInputStream(connectionTCP.getInputStream());
                 summingPhase();
             }

@@ -25,7 +25,7 @@ public class Client implements Serializable{
         try {
             socketUDP = new DatagramSocket();
             activeIPAddress = InetAddress.getByName("localhost");
-            System.out.println("Client UDP socket created.");
+            System.out.println("UDP-soketti luotu.");
         } catch (SocketException sE) {
             sE.printStackTrace();
         } catch (UnknownHostException uhE) {
@@ -72,22 +72,21 @@ public class Client implements Serializable{
                 inputInterpreter(message);      //käsittelee viestin
 
             } catch (Exception e) {
-                e.printStackTrace();
-                try{
+                //e.printStackTrace();
+                try {
                     answerRequest(-1); //välitä serverille tieto että ei saatu t
                     inputInterpreter(0);        //sulje hallitusti
-                }catch (IOException ioE){}
+                } catch (IOException ioE) {
                 }
+            }
         }while (true);
-    }
+        }
     private void runSummingThreads(int n){
-        System.out.println("Pekka. " + n);
-        for (int i = 0; i <= n; i++){         //luodaan portit 3127:(3127+n)
+        for (int i = 0; i < n; i++){         //luodaan portit 3127:(3127+n)
             activeCalculators.add(new Calculator(i + 3127));   //luodaan ja...
-            activeCalculators.get(i).run();             //...käynnistetään oliot
-            System.out.println("Pätkä.");
             answerRequest(activeCalculators.get(i).getPort());
-            System.out.println("Summaussäikeet käynnistetty.");
+            activeCalculators.get(i).start();             //...käynnistetään oliot
+            System.out.println("Summaussäie " + activeCalculators.get(i).getPort() + " käynnistetty.");
         }
     }
     private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
@@ -120,12 +119,14 @@ public class Client implements Serializable{
 
 		case 2:					//mille palvelijalle välitetty summa suurin
 			int greatestCalc = 0;
+			int threadIndex = 0;
 			for (int i = 0; i < activeCalculators.size(); i++) {
-				if (greatestCalc < activeCalculators.get(i).getSum())
-					greatestCalc = activeCalculators.get(i).getPort();
+				if (greatestCalc < activeCalculators.get(i).getSum()){
+					greatestCalc = activeCalculators.get(i).getSum();
+				    threadIndex = i;}
 			}
-			System.out.println("Palvelin, jolla suurin summa=" + greatestCalc);
-			answerRequest(greatestCalc);
+			System.out.println("Palvelin, jolla suurin summa : " + threadIndex);
+			answerRequest(threadIndex);
 			break;
 		
 		case 3:					//kaikille palvelimille välitettyjen lukujen kokonaismäärä
@@ -145,7 +146,7 @@ public class Client implements Serializable{
         try{
             output.writeInt(n);
             output.flush();
-        }catch (IOException ioE){ioE.printStackTrace();
+        }catch (IOException ioE){/*ioE.printStackTrace();*/
         }
     }
 }
