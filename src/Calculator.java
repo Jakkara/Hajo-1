@@ -14,10 +14,10 @@ public class Calculator extends Thread {
 
     Calculator(int port){
         portNumber = port;
-    }
+    } //asetetaan luotaessa porttiin
 
     @Override
-    public void run() {
+    public void run() { //aktivoi kommunikointia varten TCP-soketin ja streamin
         try {
             serverSocket = new ServerSocket(portNumber);
             while (!stop) {
@@ -30,8 +30,7 @@ public class Calculator extends Thread {
             ioE.printStackTrace();
         }
     }
-    private void summingPhase(){
-        //TODO : laske saadut luvut
+    private void summingPhase(){ //käsittelee sille lähetetyt luvut
         int receivedInt = 0;
         try{
             receivedInt = input.readInt();

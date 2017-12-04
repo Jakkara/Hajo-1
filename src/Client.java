@@ -89,60 +89,64 @@ public class Client implements Serializable{
             System.out.println("Summaussäie " + activeCalculators.get(i).getPort() + " käynnistetty.");
         }
     }
+
     private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
-        //TODO viestin käsittely
         if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
             runSummingThreads(receivedInt);
             portsAreSetup = true;
             System.out.println("Portit auki");
         }
-        switch (receivedInt) {
-		case 0:						//lopettaa summauspalvelijat ja sulkee yhteydet
-			for (Calculator calc : activeCalculators) {
-					calc.kill(); 
-			}
-			output.close();
-			input.close();
-			connectionTCP.close();
-			System.out.println("Palvelijat lopetettu ja yhteydet suljettu.");
-			break;
-			
-		case 1:					//t?h?n menness? v?litettyjen lukujen summa
-			int calcTotalValue = 0;
-			for (int i=0; i<activeCalculators.size(); i++) {
-				calcTotalValue += activeCalculators.get(i).getSum();
-			}
-			System.out.println("Kokonaissumma on " + calcTotalValue);
-			answerRequest(calcTotalValue);	
-			break;
-		
+        else{
+            switch (receivedInt) {
+                case 0:                        //lopettaa summauspalvelijat ja sulkee yhteydet
+                    for (Calculator calc : activeCalculators) {
+                        calc.kill();
+                    }
+                    output.close();
+                    input.close();
+                    connectionTCP.close();
+                    System.out.println("Palvelijat lopetettu ja yhteydet suljettu.");
+                    break;
 
-		case 2:					//mille palvelijalle välitetty summa suurin
-			int greatestCalc = 0;
-			int threadIndex = 0;
-			for (int i = 0; i < activeCalculators.size(); i++) {
-				if (greatestCalc < activeCalculators.get(i).getSum()){
-					greatestCalc = activeCalculators.get(i).getSum();
-				    threadIndex = i + 1;}
-			}
-			System.out.println("Palvelin, jolla suurin summa : " + threadIndex);
-			answerRequest(threadIndex);
-			break;
-		
-		case 3:					//kaikille palvelimille välitettyjen lukujen kokonaismäärä
-			int numbersReceived=0;
-			for(int i=0; i < activeCalculators.size(); i++) {
-				numbersReceived += activeCalculators.get(i).getNumbersReceivedAmount();
-			}
-			System.out.println("Välitettyjen lukujen kokonaismäärä on " + numbersReceived);
-			answerRequest(numbersReceived);
-			break;
-			
-		default:				//vastaa takaisin luvulla -1, jos ei mikään edellisistä tapauksista
-			//answerRequest(-1);
+                case 1:                    //tähän menness? välitettyjen lukujen summa
+                    int calcTotalValue = 0;
+                    for (int i = 0; i < activeCalculators.size(); i++) {
+                        calcTotalValue += activeCalculators.get(i).getSum();
+                    }
+                    System.out.println("Kokonaissumma on " + calcTotalValue);
+                    answerRequest(calcTotalValue);
+                    break;
+
+
+                case 2:                    //mille palvelijalle välitetty summa suurin
+                    int greatestCalc = Integer.MIN_VALUE;
+                    int threadIndex = 0;
+                    for (int i = 0; i < activeCalculators.size(); i++) {
+                        if (greatestCalc < activeCalculators.get(i).getSum()) {
+                            greatestCalc = activeCalculators.get(i).getSum();
+                            threadIndex = i + 1;
+                        }
+                    }
+                    System.out.println("Palvelin, jolla suurin summa : " + threadIndex);
+                    answerRequest(threadIndex);
+                    break;
+
+                case 3:                    //kaikille palvelimille välitettyjen lukujen kokonaismäärä
+                    int numbersReceived = 0;
+                    for (int i = 0; i < activeCalculators.size(); i++) {
+                        numbersReceived += activeCalculators.get(i).getNumbersReceivedAmount();
+                    }
+                    System.out.println("Välitettyjen lukujen kokonaismäärä on " + numbersReceived);
+                    answerRequest(numbersReceived);
+                    break;
+
+                default:                //vastaa takaisin luvulla -1, jos ei mikään edellisistä tapauksista
+                    answerRequest(-1);
+            }
 		}
+    }
 
-    }private void answerRequest(int n){ //välitä viesti takaisin palvelimelle
+    private void answerRequest(int n){ //välitä viesti takaisin palvelimelle
         try{
             output.writeInt(n);
             output.flush();
