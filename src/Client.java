@@ -83,9 +83,14 @@ public class Client implements Serializable{
         }
     private void runSummingThreads(int n){
         for (int i = 0; i < n; i++){         //luodaan portit 3127:(3127+n)
-            activeCalculators.add(new Calculator(i + 3127));   //luodaan ja...
-            answerRequest(activeCalculators.get(i).getPort());
-            activeCalculators.get(i).start();             //...käynnistetään oliot
+            try{
+                activeCalculators.add(new Calculator(i + 3127)); //luo uusi laskija
+                Thread.sleep(200);  //hetken tauko
+                activeCalculators.get(i).start();      //käynnistetään olio
+                answerRequest(i + 3127); //ilmoita olion olevan aktiivinen
+            }catch (InterruptedException iE){
+                iE.printStackTrace();}
+
             System.out.println("Summaussäie " + activeCalculators.get(i).getPort() + " käynnistetty.");
         }
     }
@@ -100,7 +105,7 @@ public class Client implements Serializable{
         }
         else{
             switch (receivedInt) {
-                case 0:                        //lopettaa summauspalvelijat ja sulkee yhteydet
+                case 0:             //lopettaa summauspalvelijat ja sulkee yhteydet
                     for (Calculator calc : activeCalculators) {
                         calc.kill();
                     }
@@ -108,19 +113,20 @@ public class Client implements Serializable{
                     input.close();
                     connectionTCP.close();
                     System.out.println("Palvelijat lopetettu ja yhteydet suljettu.");
+                    System.exit(0);
                     break;
 
-                case 1:                    //tähän menness? välitettyjen lukujen summa
+                case 1:             //tähän mennessä välitettyjen lukujen summa
                     int calcTotalValue = 0;
                     for (int i = 0; i < activeCalculators.size(); i++) {
                         calcTotalValue += activeCalculators.get(i).getSum();
                     }
-                    System.out.println("Kokonaissumma on " + calcTotalValue);
+                    System.out.println("Kokonaissumma on " + calcTotalValue + "\n");
                     answerRequest(calcTotalValue);
                     break;
 
 
-                case 2:                    //mille palvelijalle välitetty summa suurin
+                case 2:              //mille palvelijalle välitetty summa suurin
                     int greatestCalc = Integer.MIN_VALUE;
                     int threadIndex = 0;
                     for (int i = 0; i < activeCalculators.size(); i++) {
@@ -129,20 +135,20 @@ public class Client implements Serializable{
                             threadIndex = i + 1;
                         }
                     }
-                    System.out.println("Palvelin, jolla suurin summa : " + threadIndex);
+                    System.out.println("Palvelin, jolla suurin summa : " + threadIndex + "\n");
                     answerRequest(threadIndex);
                     break;
 
-                case 3:                    //kaikille palvelimille välitettyjen lukujen kokonaismäärä
+                case 3:               //kaikille palvelimille välitettyjen lukujen kokonaismäärä
                     int numbersReceived = 0;
                     for (int i = 0; i < activeCalculators.size(); i++) {
                         numbersReceived += activeCalculators.get(i).getNumbersReceivedAmount();
                     }
-                    System.out.println("Välitettyjen lukujen kokonaismäärä on " + numbersReceived);
+                    System.out.println("Välitettyjen lukujen kokonaismäärä on " + numbersReceived + "\n");
                     answerRequest(numbersReceived);
                     break;
 
-                default:                //vastaa takaisin luvulla -1, jos ei mikään edellisistä tapauksista
+                default:              //vastaa takaisin luvulla -1, jos ei mikään edellisistä tapauksista
                     answerRequest(-1);
             }
 		}

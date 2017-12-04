@@ -35,17 +35,16 @@ public class Calculator extends Thread {
         int receivedInt = 0;
         try{
             receivedInt = input.readInt();
-            System.out.println("Laskijaolio " + portNumber + " sai luvun  " + receivedInt);
-
-            if (receivedInt == 0)kill();
+            if (receivedInt == 0) kill();
             sum += receivedInt;
             amountOfReceivedInputs += 1;
+
+            System.out.println("Laskijaolio " + portNumber + " sai luvun " + receivedInt);
+
         }catch (IOException ioE){ioE.printStackTrace();
         }
     }
-    public int getSum(){
-        return sum;
-    }
+    public int getSum(){ return sum; }
 
     public int getNumbersReceivedAmount(){
         return amountOfReceivedInputs;
@@ -55,9 +54,11 @@ public class Calculator extends Thread {
         try{
             connectionTCP.close();
             input.close();
+            stop = true;
+
             System.out.println("Laskijaolio " + portNumber + " sai tappokäskyn ja lopettaa toimintansa.");
         }catch (IOException ioE){}
-        stop = true;
+
     }
 
     public int getPort() {
