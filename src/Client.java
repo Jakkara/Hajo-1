@@ -94,7 +94,9 @@ public class Client implements Serializable{
         if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
             runSummingThreads(receivedInt);
             portsAreSetup = true;
+            System.out.println("*****");
             System.out.println("Portit auki");
+            System.out.println("*****");
         }
         else{
             switch (receivedInt) {

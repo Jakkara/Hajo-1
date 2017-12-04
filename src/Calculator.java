@@ -14,7 +14,7 @@ public class Calculator extends Thread {
 
     Calculator(int port){
         portNumber = port;
-    } //asetetaan luotaessa porttiin
+    } //sidotaan porttinumeroon konstruktorissa
 
     @Override
     public void run() { //aktivoi kommunikointia varten TCP-soketin ja streamin
@@ -22,8 +22,9 @@ public class Calculator extends Thread {
             serverSocket = new ServerSocket(portNumber);
             while (!stop) {
                 connectionTCP = serverSocket.accept();
-                System.out.println(portNumber + " aktiivinen.");
+                System.out.println("Laskija portissa " + portNumber + " aktiivinen.");
                 input = new ObjectInputStream(connectionTCP.getInputStream());
+                System.out.println("*****");
                 summingPhase();
             }
         } catch (IOException ioE) {
@@ -34,6 +35,8 @@ public class Calculator extends Thread {
         int receivedInt = 0;
         try{
             receivedInt = input.readInt();
+            System.out.println("Laskijaolio " + portNumber + " sai luvun  " + receivedInt);
+
             if (receivedInt == 0)kill();
             sum += receivedInt;
             amountOfReceivedInputs += 1;
@@ -43,16 +46,20 @@ public class Calculator extends Thread {
     public int getSum(){
         return sum;
     }
+
     public int getNumbersReceivedAmount(){
         return amountOfReceivedInputs;
     }
+
     public void kill(){
         try{
             connectionTCP.close();
             input.close();
+            System.out.println("Laskijaolio " + portNumber + " sai tappokäskyn ja lopettaa toimintansa.");
         }catch (IOException ioE){}
         stop = true;
     }
+
     public int getPort() {
     	return portNumber;
     }
