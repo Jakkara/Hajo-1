@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
-public class Client implements Serializable{
+public class Client{
     //UDP
     private InetAddress activeIPAddress;
     private int activePortNumber = 3126;

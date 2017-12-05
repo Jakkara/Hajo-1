@@ -190,6 +190,7 @@ public class WorkDistributor {
 					System.out.println("Making test 3 in set 1");
 				}
 				makeTest(3, lkm, masterOut, masterIn);
+
 				for (int i = 0; i < 9; i++) {
 					for (int j = 0; j < calcs; j++) {
 						int number = (int) (Math.random() * 40) - 20;
@@ -213,6 +214,13 @@ public class WorkDistributor {
 						biggest = i;
 					}
 				}
+				//----------------------------------
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				//----------------------------------
 				// test 4
 				if (verboseMode) {
 					System.out.println("Making test 1 in set 2");
