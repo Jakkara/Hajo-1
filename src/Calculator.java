@@ -36,10 +36,12 @@ public class Calculator extends Thread {
             while(!stop) {
                 int receivedInt = input.readInt();
                 if (receivedInt == 0) kill();
-                sum += receivedInt;
-                amountOfReceivedInputs += 1;
+                else{
+                    amountOfReceivedInputs += 1;
+                    sum += receivedInt;
+                    System.out.println("Laskijaolio " + portNumber + " sai luvun " + receivedInt);
 
-                System.out.println("Laskijaolio " + portNumber + " sai luvun " + receivedInt);
+                }
             }
         }catch (IOException ioE){
         }
