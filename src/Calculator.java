@@ -31,7 +31,7 @@ public class Calculator extends Thread {
             ioE.printStackTrace();
         }
     }
-    private void summingPhase(){ //k√§sittelee sille l√§hetetyt luvut
+    private void summingPhase(){ //k‰sittelee sille l‰hetetyt luvut
         int receivedInt = 0;
         try{
             receivedInt = input.readInt();
@@ -56,7 +56,7 @@ public class Calculator extends Thread {
             input.close();
             stop = true;
 
-            System.out.println("Laskijaolio " + portNumber + " sai tappok√§skyn ja lopettaa toimintansa.");
+            System.out.println("Laskijaolio " + portNumber + " sai tappok‰skyn ja lopettaa toimintansa.");
         }catch (IOException ioE){}
 
     }
