@@ -1,3 +1,5 @@
+import org.omg.CORBA.TIMEOUT;
+
 import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeoutException;
 
 public class Client implements Serializable{
     private InetAddress activeIPAddress;
@@ -18,6 +22,7 @@ public class Client implements Serializable{
     private ObjectInputStream input;
     private boolean portsAreSetup = false;
     private ArrayList<Calculator> activeCalculators = new ArrayList<>(3140);
+    private int timeOut = 5000;
 
     public Client() {}
 
@@ -65,22 +70,29 @@ public class Client implements Serializable{
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client kuuntelee viestiä.");
         int message;
+        long startTime = System.currentTimeMillis();
+        long elapsedTime = 0L;
         do {
             try {
-                message = input.readInt();
-                System.out.println("Server lähetti luvun : " + message);
-                inputInterpreter(message);      //käsittelee viestin
-
-            } catch (Exception e) {
-                /*e.printStackTrace();
+                while(elapsedTime < timeOut){
+                    message = input.readInt();
+                    elapsedTime = (new Date()).getTime() - startTime;
+                    System.out.println("Server lähetti luvun : " + message);
+                    inputInterpreter(message);      //käsittelee viestin
+                    elapsedTime = 0L;
+                }
+                throw new TimeoutException();
+            } catch (TimeoutException e) {
                 try {
                     answerRequest(-1); //välitä serverille tieto että ei saatu t
                     inputInterpreter(0);        //sulje hallitusti
-                } catch (IOException ioE) {
-                }*/
+                } catch (IOException ioE) {}
+            }catch (IOException ioE){
+                //ioE.printStackTrace();
             }
         }while (true);
-        }
+    }
+
     private void runSummingThreads(int n){
         for (int i = 0; i < n; i++){         //luodaan portit 3127:(3127+n)
             try{
@@ -102,6 +114,7 @@ public class Client implements Serializable{
             System.out.println("*****");
             System.out.println("Portit auki");
             System.out.println("*****");
+            timeOut = 60000; //kun ensimmäinen numero on saatu, muutetaan timeout minuutiksi
         }
         else{
             switch (receivedInt) {
@@ -113,7 +126,6 @@ public class Client implements Serializable{
                     input.close();
                     connectionTCP.close();
                     System.out.println("Palvelijat lopetettu ja yhteydet suljettu.");
-                    System.exit(0);
                     break;
 
                 case 1:             //tähän mennessä välitettyjen lukujen summa
