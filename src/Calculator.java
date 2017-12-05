@@ -32,16 +32,16 @@ public class Calculator extends Thread {
         }
     }
     private void summingPhase(){ //käsittelee sille lähetetyt luvut
-        int receivedInt = 0;
         try{
-            receivedInt = input.readInt();
-            if (receivedInt == 0) kill();
-            sum += receivedInt;
-            amountOfReceivedInputs += 1;
+            while(!stop) {
+                int receivedInt = input.readInt();
+                if (receivedInt == 0) kill();
+                sum += receivedInt;
+                amountOfReceivedInputs += 1;
 
-            System.out.println("Laskijaolio " + portNumber + " sai luvun " + receivedInt);
-
-        }catch (IOException ioE){ioE.printStackTrace();
+                System.out.println("Laskijaolio " + portNumber + " sai luvun " + receivedInt);
+            }
+        }catch (IOException ioE){
         }
     }
     public int getSum(){ return sum; }
@@ -55,10 +55,8 @@ public class Calculator extends Thread {
             connectionTCP.close();
             input.close();
             stop = true;
-
             System.out.println("Laskijaolio " + portNumber + " sai tappokäskyn ja lopettaa toimintansa.");
         }catch (IOException ioE){}
-
     }
 
     public int getPort() {

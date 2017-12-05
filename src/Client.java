@@ -94,8 +94,8 @@ public class Client implements Serializable{
         for (int i = 0; i < n; i++){         //luodaan portit 3127:(3127+n)
             try{
                 activeCalculators.add(new Calculator(i + 3127)); //luo uusi laskija
-                Thread.sleep(200);  //hetken tauko
                 activeCalculators.get(i).start();      //käynnistetään olio
+                Thread.sleep(200);  //hetken tauko
                 answerRequest(i + 3127); //ilmoita olion olevan aktiivinen
             }catch (InterruptedException iE){
                 iE.printStackTrace();
@@ -126,6 +126,7 @@ public class Client implements Serializable{
                     input.close();
                     connectionTCP.close();
                     System.out.println("Palvelijat lopetettu ja yhteydet suljettu.");
+                    System.exit(0);
                     break;
 
                 case 1:             //tähän mennessä välitettyjen lukujen summa

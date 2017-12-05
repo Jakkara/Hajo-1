@@ -197,6 +197,7 @@ public class WorkDistributor {
 							number++;
 						}
 						streams[j].writeInt(number);
+						System.out.println("Lähetetty : " + j + " : " + number + "\n");
 						streams[j].flush();
 						table[j] += number;
 						lkm++;
