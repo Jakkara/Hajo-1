@@ -26,6 +26,8 @@ public class Client implements Serializable{
     private ArrayList<Calculator> activeCalculators = new ArrayList<>(3140);
     private int timeOut = 5000;
     private long elapsedTime = 0L;
+    long startTime = 0L;
+
 
     public Client() {}
 
@@ -73,14 +75,14 @@ public class Client implements Serializable{
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client kuuntelee viestiä.");
         int message;
-        long startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis(); //nykyhetki
         do {
             try {
                 while(elapsedTime < timeOut){
                     message = input.readInt();
-                    elapsedTime = (new Date()).getTime() - startTime;
                     System.out.println("Server lähetti luvun : " + message);
                     inputInterpreter(message);      //käsittelee viestin
+                    elapsedTime = (new Date()).getTime() - startTime;
                 }
                 throw new TimeoutException();
             } catch (TimeoutException e) {
@@ -102,15 +104,17 @@ public class Client implements Serializable{
                 activeCalculators.get(i).start();      //käynnistetään olio
                 answerRequest(i + 3127); //ilmoita olion olevan aktiivinen
             }catch (InterruptedException iE){
-                iE.printStackTrace();}
-
+                iE.printStackTrace();
+            }
             System.out.println("Summaussäie " + activeCalculators.get(i).getPort() + " käynnistetty.");
         }
     }
 
     private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
-        elapsedTime = 0L;
-        if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
+        elapsedTime = 0L; //luku saatu, nollaa ajastin
+        startTime = System.currentTimeMillis(); //nykyhetki päivittyy
+
+        if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä säikeet
             runSummingThreads(receivedInt);
             portsAreSetup = true;
             System.out.println("*****");
