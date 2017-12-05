@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
 public class Client implements Serializable{
+    //UDP
     private InetAddress activeIPAddress;
     private int activePortNumber = 3126;
     private DatagramSocket socketUDP;
@@ -20,13 +21,15 @@ public class Client implements Serializable{
     private Socket connectionTCP;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+    //Globals
     private boolean portsAreSetup = false;
     private ArrayList<Calculator> activeCalculators = new ArrayList<>(3140);
     private int timeOut = 5000;
+    private long elapsedTime = 0L;
 
     public Client() {}
 
-    public void createUDPSocket() {//luo lähettämistä varten UDP-soketti
+    public void createUDPSocket() {     //luo lähettämistä varten UDP-soketti
         try {
             socketUDP = new DatagramSocket();
             activeIPAddress = InetAddress.getByName("localhost");
@@ -71,7 +74,6 @@ public class Client implements Serializable{
         System.out.println("Client kuuntelee viestiä.");
         int message;
         long startTime = System.currentTimeMillis();
-        long elapsedTime = 0L;
         do {
             try {
                 while(elapsedTime < timeOut){
@@ -79,7 +81,6 @@ public class Client implements Serializable{
                     elapsedTime = (new Date()).getTime() - startTime;
                     System.out.println("Server lähetti luvun : " + message);
                     inputInterpreter(message);      //käsittelee viestin
-                    elapsedTime = 0L;
                 }
                 throw new TimeoutException();
             } catch (TimeoutException e) {
@@ -108,6 +109,7 @@ public class Client implements Serializable{
     }
 
     private void inputInterpreter(int receivedInt) throws IOException {     //käsittele saatu luku
+        elapsedTime = 0L;
         if (!portsAreSetup) { //jos portteja ei vielä avattu, käynnistä
             runSummingThreads(receivedInt);
             portsAreSetup = true;
