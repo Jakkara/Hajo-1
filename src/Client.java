@@ -1,9 +1,3 @@
-import org.omg.CORBA.TIMEOUT;
-
-import javax.xml.crypto.Data;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -26,7 +20,7 @@ public class Client implements Serializable{
     private ArrayList<Calculator> activeCalculators = new ArrayList<>(3140);
     private int timeOut = 5000;
     private long elapsedTime = 0L;
-    long startTime = 0L;
+    private long startTime = 0L;
 
 
     public Client() {}
@@ -44,7 +38,7 @@ public class Client implements Serializable{
     }
 
     public void sendUdpPacket(String message) { //lähetä porttiosoitteen sisältävä paketti
-        offeredPort = message;
+        offeredPort = message; //talletetaan siltä varalta että ensimmäinen paketti ei mene perille
         try {
             byte[] dataArrayToSend = message.getBytes();
             DatagramPacket packetToSend = new DatagramPacket(dataArrayToSend, dataArrayToSend.length, activeIPAddress, activePortNumber);
@@ -67,8 +61,8 @@ public class Client implements Serializable{
                 System.out.println("Stream serveriin aktiivinen.");
                 communicationPhase();
             }
-        }catch (IOException ioE) {
-            ioE.printStackTrace();
+        }catch (Exception e) {
+            e.printStackTrace();
             sendUdpPacket(offeredPort); //jos timeout, lähetä uudestaan
         }
     }
@@ -78,13 +72,13 @@ public class Client implements Serializable{
         startTime = System.currentTimeMillis(); //nykyhetki
         do {
             try {
-                while(elapsedTime < timeOut){
+                while(elapsedTime < timeOut){ //toimii timeouttina, verrataan alussa 5s ja myöhemmin 60s
                     message = input.readInt();
                     System.out.println("Server lähetti luvun : " + message);
                     inputInterpreter(message);      //käsittelee viestin
-                    elapsedTime = (new Date()).getTime() - startTime;
+                    elapsedTime = (new Date()).getTime() - startTime;       //pitää kirjaa kuluneesta ajasta
                 }
-                throw new TimeoutException();
+                throw new TimeoutException();       //jos aikaraja ylittyy, heitä poikkeus
             } catch (TimeoutException e) {
                 try {
                     answerRequest(-1); //välitä serverille tieto että ei saatu t

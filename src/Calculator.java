@@ -17,7 +17,7 @@ public class Calculator extends Thread {
     } //sidotaan porttinumeroon konstruktorissa
 
     @Override
-    public void run() { //aktivoi kommunikointia varten TCP-soketin ja streamin
+    public void run() { //aktivoi kommunikointia varten TCP-streamin
         try {
             serverSocket = new ServerSocket(portNumber);
             while (!stop) {
