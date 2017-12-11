@@ -53,7 +53,19 @@ public class Client{
             serverSocket = new ServerSocket(3200);
             serverSocket.setSoTimeout(5000);
             while (true){
-                connectionTCP = serverSocket.accept();
+                int tryCounter = 0;
+                while(tryCounter <= 5){
+                    try{
+                        connectionTCP = serverSocket.accept();
+                    }catch(SocketTimeoutException stoE){
+                        System.out.print("Ei yhteyttä TCP-porttiin. Jatketaan kuuntelua. ");
+                        if (tryCounter <= 5){ //yritetään 5 kertaa
+                            tryCounter++;
+                            sendUdpPacket(offeredPort); //jos timeout, lähetä uudestaan
+                        }if(tryCounter == 6){System.out.println("Ei yhteyttä. Suljetaan ohjelma.");System.exit(0);}
+                    }
+                }
+
                 System.out.println("Muodostetaan TCP-yhteys serveriin.");
                 output = new ObjectOutputStream(connectionTCP.getOutputStream());
                 output.flush();
@@ -61,10 +73,7 @@ public class Client{
                 System.out.println("Stream serveriin aktiivinen.");
                 communicationPhase();
             }
-        }catch (Exception e) {
-            e.printStackTrace();
-            sendUdpPacket(offeredPort); //jos timeout, lähetä uudestaan
-        }
+        }catch (IOException ioE){ioE.printStackTrace();}
     }
     private void communicationPhase() { //kun ollaan valmiita kuuntelemaan käskyjä
         System.out.println("Client kuuntelee viestiä.");
